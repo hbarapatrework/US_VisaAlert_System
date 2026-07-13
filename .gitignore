@@ -1,0 +1,25 @@
+# Database
+visa_slots.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Polling state
+.last_poll
+
+# Logs
+*.log

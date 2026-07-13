@@ -1,0 +1,119 @@
+[{
+  "slotDetails": [
+    {
+      "createdon": "Sun, 12 Jul 2026 00:31:09 GMT",
+      "imghash": "72w8C4242438R8b7n8",
+      "slots": 0,
+      "visa_location": "CHENNAI"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 01:00:23 GMT",
+      "imghash": "52C8I464l5C0W0D3U3",
+      "slots": 0,
+      "visa_location": "CHENNAI VAC"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 00:31:15 GMT",
+      "imghash": "T2k8m4Y414X8m878i7",
+      "slots": 5,
+      "start_date": "28 May 2027",
+      "visa_location": "HYDERABAD"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 01:00:27 GMT",
+      "imghash": "B2b8b4M4s580J0z3D6",
+      "slots": 0,
+      "visa_location": "HYDERABAD VAC"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 00:57:17 GMT",
+      "imghash": "H2j83414Q4Y9u8j839",
+      "slots": 0,
+      "visa_location": "KOLKATA VAC"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 01:00:22 GMT",
+      "imghash": "q2f8240465P0A04302",
+      "slots": 0,
+      "visa_location": "MUMBAI VAC"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 01:00:32 GMT",
+      "imghash": "f2U8K4R4p5D0x0w404",
+      "slots": 0,
+      "visa_location": "NEW DELHI VAC"
+    }
+  ],
+  "userActivity": {
+    "remaining": 191,
+    "retrieve": 0,
+    "slots": 9,
+    "upload": 4
+  },
+  "userDetails": {
+    "appointment_type": "Regular",
+    "subscription": "subscribed",
+    "visa_type": "H-1B"
+  }
+},
+{
+  "slotDetails": [
+    {
+      "createdon": "Sun, 12 Jul 2026 00:31:09 GMT",
+      "imghash": "72w8C4242438R8b7n8",
+      "slots": 0,
+      "visa_location": "CHENNAI"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 01:00:23 GMT",
+      "imghash": "52C8I464l5C0W0D3U3",
+      "slots": 3,
+      "start_date": "25 May 2027",
+      "visa_location": "CHENNAI VAC"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 00:31:15 GMT",
+      "imghash": "T2k8m4Y414X8m878i7",
+      "slots": 5,
+      "start_date": "28 May 2027",
+      "visa_location": "HYDERABAD"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 01:00:27 GMT",
+      "imghash": "B2b8b4M4s580J0z3D6",
+      "slots": 10,
+      "start_date": "25 May 2027",
+      "visa_location": "HYDERABAD VAC"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 00:57:17 GMT",
+      "imghash": "H2j83414Q4Y9u8j839",
+      "slots": 0,
+      "visa_location": "KOLKATA VAC"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 01:00:22 GMT",
+      "imghash": "q2f8240465P0A04302",
+      "slots": 3,
+      "start_date": "15 May 2027",
+      "visa_location": "MUMBAI VAC"
+    },
+    {
+      "createdon": "Sun, 12 Jul 2026 01:00:32 GMT",
+      "imghash": "f2U8K4R4p5D0x0w404",
+      "slots": 0,
+      "visa_location": "NEW DELHI VAC"
+    }
+  ],
+  "userActivity": {
+    "remaining": 191,
+    "retrieve": 0,
+    "slots": 9,
+    "upload": 4
+  },
+  "userDetails": {
+    "appointment_type": "Regular",
+    "subscription": "subscribed",
+    "visa_type": "H-1B"
+  }
+}]

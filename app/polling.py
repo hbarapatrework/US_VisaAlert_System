@@ -50,6 +50,10 @@ class PollingManager:
         if remaining_sessions <= critical_threshold:
             return max_interval
 
+        ## Special case for early morning hours between 1am to 5am
+        if 1 < datetime.now().hour < 5:
+            return 30*60
+
         minutes_until_reset = self.get_time_until_reset()
 
         interval_minutes = minutes_until_reset / (remaining_sessions - 24)

@@ -82,7 +82,8 @@ class Config:
     def topics(self) -> dict:
         return {
             'vac': self.get('NTFY_TOPIC_VAC'),
-            'interview': self.get('NTFY_TOPIC_INTERVIEW')
+            'interview': self.get('NTFY_TOPIC_INTERVIEW'),
+            'session': self.get('NTFY_TOPIC_SESSION')
         }
     
     @property
@@ -122,5 +123,5 @@ class Config:
 
 # if __name__ == '__main__':
 #     config = Config()
-#     print(config.ntfy_base_url)
-#     print(config.api_key)
+#     print(config.min_interval)
+#     print(config.max_interval)

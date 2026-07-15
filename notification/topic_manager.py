@@ -1,5 +1,8 @@
 import uuid
 from typing import Dict
+
+from pip._internal.network import session
+
 from config import Config
 from app.logger import Logger
 
@@ -13,15 +16,16 @@ class TopicManager:
     
     def generate_topic(self, prefix: str = "usvisa") -> str:
         """Generate a unique topic name."""
-        return f"{str(uuid.uuid4())[:8]}-{prefix}-{str(uuid.uuid4())}"
+        return f"{str(uuid.uuid4())[:8]}-{prefix}-{str(uuid.uuid4())}"[:64]
     
     def are_topics_empty(self) -> bool:
         """Check if ntfy topics are empty or not set."""
         topics = self.config.topics
         vac_topic = topics.get('vac', '')
         interview_topic = topics.get('interview', '')
+        session_topic = topics.get('session', '')
         
-        return not vac_topic or not interview_topic
+        return not vac_topic or not interview_topic or not session_topic
     
     def initialize_topics(self) -> Dict[str, str]:
         """Initialize topics if they are empty."""
@@ -34,17 +38,23 @@ class TopicManager:
         # Generate topics
         vac_topic = self.generate_topic("habit-usvisa-vac")
         interview_topic = self.generate_topic("habit-usvisa-interview")
+        session_topic = self.generate_topic("habit-usvisa-session")
         
         # Save to .env file
         self.config.set('NTFY_TOPIC_VAC', vac_topic)
         self.config.set('NTFY_TOPIC_INTERVIEW', interview_topic)
+        self.config.set('NTFY_TOPIC_SESSION', session_topic)
         
         self.logger.info(f"New topics created and saved to .env:")
-        self.logger.info(f"  VAC Topic: {vac_topic}")
-        self.logger.info(f"  Interview Topic: {interview_topic}")
-        self.logger.info(f"Share these topics to receive notifications:")
         self.logger.info(f"  https://ntfy.sh/{vac_topic}")
         self.logger.info(f"  https://ntfy.sh/{interview_topic}")
+        self.logger.info(f"  https://ntfy.sh/{session_topic}")
+
+        self.logger.info(f"Share these topics to receive notifications:")
+        self.logger.alert(f"  VAC Topic: {vac_topic}")
+        self.logger.alert(f"  Interview Topic: {interview_topic}")
+        self.logger.alert(f"  Session Topic: {session_topic}")
+
         
         # Reload configuration to get updated topics
         self.config = Config()

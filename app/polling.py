@@ -47,7 +47,7 @@ class PollingManager:
         critical_threshold = self.config.critical_threshold
         max_daily_polls = self.config.max_daily_polls
         
-        if remaining_sessions <= critical_threshold:
+        if remaining_sessions - 24 <= critical_threshold:
             return max_interval
 
         ## Special case for early morning hours between 1am to 5am
@@ -118,5 +118,11 @@ class PollingManager:
         """Get seconds to wait before next poll."""
         interval = self.calculate_interval(remaining_sessions)
         time_since = self.time_since_last_poll()
-        wait_time = max(0, interval - time_since)
+        wait_time = max(90, interval - time_since)
         return wait_time
+
+# if __name__ == "__main__":
+#     config = Config()
+#     poll_manager = PollingManager(config)
+#     x = poll_manager.calculate_interval(2000)
+#     print(x)

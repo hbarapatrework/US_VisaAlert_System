@@ -1,7 +1,10 @@
 import requests
 import json
 from typing import Dict, Any
+from app.logger import Logger
+from app.logger import Logger
 from config import Config
+
 
 PRIORITY_PREFIX = {
     5: "🚨🚨",
@@ -18,6 +21,7 @@ class NotificationManager:
         self.ntfy_url = config.ntfy_base_url
         self.topics = config.topics
         self.click_url = config.click_url
+        self.logger = Logger()
 
     def build_body(self, message: Dict[str, Any]) -> tuple:
         """Build the body of the notification."""
@@ -39,18 +43,24 @@ class NotificationManager:
         if not message:
             return False
         
-        topic = self.topics.get(alert_type.lower()) #"Habit-test"
+        topic = self.topics.get(alert_type.lower(), "Habit-test") #"Habit-test"
         if not topic:
             return False
 
-        body, total_slots = self.build_body(message)
-
         headers = {
-            "Title": f"{PRIORITY_PREFIX.get(priority, 5)} {alert_type} {total_slots} Slot Alert".encode("utf-8"),
+            "Title": f"{PRIORITY_PREFIX.get(priority, 5)} {alert_type} Alert".encode("utf-8"),
             "Priority": str(priority),
-            "Click": self.click_url
         }
-        
+
+        if isinstance(message, dict):
+            body, total_slots = self.build_body(message)
+            headers = {
+                "Title": f"{PRIORITY_PREFIX.get(priority, 5)} {alert_type} {total_slots} Slot Alert".encode("utf-8"),
+                "Click": self.click_url
+            }
+        else:
+            body, total_slots = message, 0
+
         try:
             response = requests.post(
                 f"{self.ntfy_url}/{topic}",
@@ -60,7 +70,7 @@ class NotificationManager:
             response.raise_for_status()
             return True
         except requests.exceptions.RequestException as e:
-            print(f"Failed to send notification: {e}")
+            self.logger.error(f"Failed to send notification: {e}")
             return False
     
     def send_all_notifications(self, messages: Dict[str, Dict[str, Any]], priorities: Dict[str, int]) -> int:

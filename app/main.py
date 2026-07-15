@@ -66,7 +66,7 @@ class VisaAlertSystem:
                 return {}, int(rs), {}
             return {}, int(self.remaining_sessions)-1, {}
     
-    def send_notifications(self, message: dict, priorities: dict) -> int:
+    def send_notifications(self, message: dict, priorities: dict, ) -> int:
         """Send notifications for available slots."""
         sent_count = self.notification_manager.send_all_notifications(message, priorities)
         
@@ -107,6 +107,10 @@ class VisaAlertSystem:
                     self.logger.warning("Reset time detected (8am) - sessions will be replenished")
                 
                 remaining_sessions = self.run_once()
+                if remaining_sessions - 24 < 0:
+                    self.logger.warning("Remaining sessions below critical threshold")
+                    self.notification_manager.send_notification("session", f"{remaining_sessions} Remaining sessions below critical threshold", 5)
+
                 wait_time = self.get_next_wait_time(remaining_sessions)
                 
                 self.logger.critical(f"Next poll in {int(wait_time)}s (Remaining sessions: {remaining_sessions})")
@@ -120,7 +124,9 @@ class VisaAlertSystem:
             self.logger.info("System shutdown requested")
         except Exception as e:
             self.logger.error(f"System error: {e}")
-            raise
+            self.notification_manager.send_notification("session",
+                                                        f"System error: {e}.",
+                                                        2)
 
 
 def main():

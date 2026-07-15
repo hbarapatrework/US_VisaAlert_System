@@ -49,7 +49,7 @@ class Logger:
         with open(log_file, "a", encoding="utf-8") as f:
             f.write(f"[{timestamp}] {level}: {message}\n")
 
-        if level in ["ERROR", "CRITICAL"]:
+        if level in ["ERROR", "CRITICAL", "ALERT"]:
             print(f"[{timestamp}] {level}: {message}")
 
     @classmethod
@@ -71,3 +71,7 @@ class Logger:
     @classmethod
     def critical(cls, message: str):
         cls._write("CRITICAL", message)
+
+    @classmethod
+    def alert(cls, message: str):
+        cls._write("ALERT", message)

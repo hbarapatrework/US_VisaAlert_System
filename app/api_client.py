@@ -98,7 +98,7 @@ class APIClient:
 
     def set_remaining_sessions(self, data: Dict[str, Any]) -> None:
         """Set remaining sessions for the current API key."""
-        session = self.extract_user_activity(data).get('remaining', 0)
+        session = int(self.extract_user_activity(data).get('remaining', 0))
         if self.current_api_key:
             self.api_remaining_sessions[self.current_api_key] = session - self.config.critical_threshold if session > 0 else 0
 
@@ -110,7 +110,6 @@ class APIClient:
             if not self.reset:
                 self.reset_seesion()
 
-        print(self.api_remaining_sessions)
 
         headers = {
             "User-Agent": self.user_agent,
@@ -128,8 +127,8 @@ class APIClient:
             message = e.response.json()['message'].split(".")[0]
 
             if e.response.status_code == 429:
-                session = str(e.response.json().get('userActivity').get('remaining'))
-                message = message + " : " + self.current_api_key + " : " + session
+                session = int(str(e.response.json().get('userActivity').get('remaining')))
+                message = f"{message} : {self.current_api_key} : {session}"
                 if not self.current_api_key in self.api_remaining_sessions:
                     self.api_remaining_sessions[self.current_api_key] = session
                 else: self.api_remaining_sessions[self.current_api_key] = self.api_remaining_sessions[self.current_api_key] - 10

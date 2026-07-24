@@ -70,9 +70,10 @@ class VisaAlertSystem:
         except Exception as e:
 
             if "429" in str(e):
-                rs = str(e).split(":")[-1]
-                self.logger.error(f"Failed to process slots: {rs}")
-                return int(rs), str(e).split(":")[-2]
+                rs = int(str(e).split(":")[-1])
+                key = str(e).split(":")[-2]
+                self.logger.error(f"Failed to process slots for {key}: {rs}")
+                return rs, str(e).split(":")[-2]
 
             self.logger.error(f"Failed to process slots: {e}")
             return 0, ""
@@ -113,6 +114,7 @@ class VisaAlertSystem:
                     self.notification_manager.send_notification("session", f"{key}: {key_remaining_sessions} Remaining sessions below critical threshold", 5)
 
                 total_remaining_sessions = self.api_client.get_total_remaining_sessions()
+
                 if self.api_client.keys_checked:
                     wait_time = self.get_next_wait_time(total_remaining_sessions)
                 else: wait_time = self.config.min_interval

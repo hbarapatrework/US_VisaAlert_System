@@ -2,7 +2,7 @@ import os
 import time
 from datetime import datetime, timedelta
 from config import Config
-from utils import Helper
+from app.utils import Helper
 
 
 class PollingManager:

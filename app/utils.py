@@ -44,7 +44,7 @@ class Helper:
         return hours_until_reset
 
     def is_reset_time(self) -> bool:
-        """Check if current time is within reset window (8am)."""
+        """Check if current time is within reset window (10am)."""
         current_time = datetime.now().time()
         reset_time = self.config.reset_time
         reset_hour, reset_minute = map(int, reset_time.split(':'))

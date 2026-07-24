@@ -110,7 +110,9 @@ class VisaAlertSystem:
                     self.notification_manager.send_notification("session", f"{key}: {key_remaining_sessions} Remaining sessions below critical threshold", 5)
 
                 total_remaining_sessions = self.api_client.get_total_remaining_sessions()
-                wait_time = self.get_next_wait_time(total_remaining_sessions)
+                if self.api_client.keys_checked:
+                    wait_time = self.get_next_wait_time(total_remaining_sessions)
+                else: wait_time = self.config.min_interval
 
                 self.logger.critical(f"Next poll in {int(wait_time)}s (Total Remaining sessions: {total_remaining_sessions})")
 

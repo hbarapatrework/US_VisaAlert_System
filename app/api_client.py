@@ -22,6 +22,15 @@ class APIClient:
         self.next_due = {}
         self.api_remaining_sessions = {}
         self.current_api_key = None
+        self.keys_checked = False
+        self.reset = False
+
+    def reset_seesion(self):
+        """Reset sesion sessions."""
+        self.next_due = {}
+        self.api_remaining_sessions = {}
+        self.keys_checked = False
+        self.reset = True
 
     def get_next_key(self, minutes_left: int) -> str:
         """
@@ -68,6 +77,7 @@ class APIClient:
                 if not key in self.api_remaining_sessions:
                     self.current_api_key = key
                     return key
+        else: self.keys_checked = True
 
         self.current_api_key = self.get_next_key(self.util.get_minutes_until_reset())
         Logger().debug(f"Using API key: {self.current_api_key}")
@@ -94,6 +104,12 @@ class APIClient:
 
     def get_slots(self) -> Dict[str, Any]:
         """Fetch current visa slots from API."""
+        if self.util.get_minutes_until_reset() < 60:
+            if self.reset: self.reset = False
+        if self.util.is_reset_time():
+            if not self.reset:
+                self.reset_seesion()
+
         headers = {
             "User-Agent": self.user_agent,
             "X-Api-Key": self.get_api_key(),

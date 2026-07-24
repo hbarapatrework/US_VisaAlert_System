@@ -1,6 +1,9 @@
 # Database
 visa_slots.db
 
+# Envronment file
+.env
+
 # Python
 __pycache__/
 *.py[cod]

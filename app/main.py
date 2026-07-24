@@ -30,7 +30,6 @@ class VisaAlertSystem:
         self.polling_manager = PollingManager(self.config)
         self.notification_manager = NotificationManager(self.config)
         self.visa_processor = VisaProcessor(self.config)
-        self.remaining_sessions = 0
     
     def process_slots(self) -> tuple:
         """Fetch and process slot data."""
@@ -39,12 +38,13 @@ class VisaAlertSystem:
             data = self.api_client.get_slots()
             
             slot_details = self.api_client.extract_slot_details(data)
-            self.remaining_sessions = self.api_client.get_remaining_sessions(data)
+            key_remaining_sessions = self.api_client.get_remaining_sessions(data)
+            api_key = self.api_client.current_api_key
             
-            self.logger.info(f"API call successful. Remaining sessions: {self.remaining_sessions}")
+            self.logger.info(f"API call successful. {api_key} - Remaining sessions: {key_remaining_sessions}")
             self.logger.debug(data)
 
-            notification_msg, records = self.visa_processor.build_notification_payload(slot_details)
+            message, records = self.visa_processor.build_notification_payload(slot_details)
 
             if records:
                 try:
@@ -57,14 +57,22 @@ class VisaAlertSystem:
             # Create notification message
             priorities = self.visa_processor.get_priorities()
             
-            return notification_msg, self.remaining_sessions, priorities
+            # return notification_msg, self.remaining_sessions, priorities
+            # message, remaining_sessions, priorities = self.process_slots()
+            sent_count = self.send_notifications(message, priorities)
+
+            if sent_count > 0:
+                self.logger.info(f"Sent {sent_count} notification(s)")
+
+            self.polling_manager.update_poll_time()
+            return key_remaining_sessions, api_key
         
         except Exception as e:
             self.logger.error(f"Failed to process slots: {e}")
             if "429" in str(e):
                 rs = str(e).split(":")[-1]
                 return {}, int(rs), {}
-            return {}, int(self.remaining_sessions)-1, {}
+            return {}, 0, {}
     
     def send_notifications(self, message: dict, priorities: dict, ) -> int:
         """Send notifications for available slots."""
@@ -75,17 +83,7 @@ class VisaAlertSystem:
             self.logger.info("Priorities reset after sending notifications")
         
         return sent_count
-    
-    def run_once(self) -> int:
-        """Run a single polling cycle."""
-        message, remaining_sessions, priorities = self.process_slots()
-        sent_count = self.send_notifications(message, priorities)
-        
-        if sent_count > 0:
-            self.logger.info(f"Sent {sent_count} notification(s)")
-        
-        self.polling_manager.update_poll_time()
-        return remaining_sessions
+
     
     def get_next_wait_time(self, remaining_sessions: int) -> float:
         """Calculate wait time before next poll."""
@@ -103,18 +101,19 @@ class VisaAlertSystem:
         
         try:
             while True:
-                if self.check_reset_time():
-                    self.logger.warning("Reset time detected (8am) - sessions will be replenished")
+                # if self.check_reset_time():
+                #     self.logger.warning("Reset time detected - sessions will be replenished")
                 
-                remaining_sessions = self.run_once()
-                if remaining_sessions - 24 < 0:
+                key_remaining_sessions, key = self.process_slots()
+                if key_remaining_sessions <= self.config.critical_threshold:
                     self.logger.warning("Remaining sessions below critical threshold")
-                    self.notification_manager.send_notification("session", f"{remaining_sessions} Remaining sessions below critical threshold", 5)
+                    self.notification_manager.send_notification("session", f"{key}: {key_remaining_sessions} Remaining sessions below critical threshold", 5)
 
-                wait_time = self.get_next_wait_time(remaining_sessions)
-                
-                self.logger.critical(f"Next poll in {int(wait_time)}s (Remaining sessions: {remaining_sessions})")
-                
+                total_remaining_sessions = self.api_client.get_total_remaining_sessions()
+                wait_time = self.get_next_wait_time(total_remaining_sessions)
+
+                self.logger.critical(f"Next poll in {int(wait_time)}s (Total Remaining sessions: {total_remaining_sessions})")
+
                 # Sleep in small increments to allow for graceful shutdown
                 start_time = time.time()
                 while time.time() - start_time < wait_time:

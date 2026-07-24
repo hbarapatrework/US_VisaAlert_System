@@ -68,7 +68,18 @@ class Config:
     
     @property
     def api_key(self) -> str:
-        return self.get('API_KEY')
+        api_keys = []
+        end_of_key = False
+        i = 1
+        while not end_of_key:
+            key = f'API_KEY_{i}'
+            value = self.get(key)
+            if value:
+                api_keys.append(value)
+            else:
+                end_of_key = True
+            i += 1
+        return api_keys
     
     @property
     def user_agent(self) -> str:
@@ -121,7 +132,7 @@ class Config:
     def critical_threshold(self) -> int:
         return int(self.get('POLLING_CRITICAL_THRESHOLD', 10))
 
-# if __name__ == '__main__':
-#     config = Config()
-#     print(config.min_interval)
-#     print(config.max_interval)
+if __name__ == '__main__':
+    config = Config()
+    print(config.api_key)
+    # print(config.max_interval)

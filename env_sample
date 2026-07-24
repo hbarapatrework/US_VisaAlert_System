@@ -4,16 +4,16 @@ DATABASE_NAME=visa_slots.db
 # API Configuration
 API_BASE_URL=https://app.checkvisaslots.com/slots/v3
 API_USER_AGENT=Mozilla/5.0
-API_KEY_1=IRT4UL
-API_KEY_2=JIRATU
-API_KEY_3=59F73J
+API_KEY_1=
+API_KEY_2=
+API_KEY_3=
 
 
 # Notification Configuration
 NTFY_BASE_URL=https://ntfy.sh
-NTFY_TOPIC_VAC=062c9c0c-habit-usvisa-vac-7a062140-f79a-41a8-a6bd-35e4d8af5626
-NTFY_TOPIC_INTERVIEW=a3bafc03-habit-usvisa-interview-d170671a-c1b9-49af-96a4-5b2cc406
-NTFY_TOPIC_SESSION=f1513369-habit-usvisa-session-1b2f6fe0-ae57-4542-a60f-a07bb8005b
+NTFY_TOPIC_VAC=
+NTFY_TOPIC_INTERVIEW=
+NTFY_TOPIC_SESSION=
 NTFY_CLICK_URL=https://www.usvisascheduling.com
 
 # Priority Configuration

@@ -130,6 +130,7 @@ class APIClient:
                 message = message + " : " + self.current_api_key + " : " + session
 
             raise Exception(f"API request failed: {e.response.status_code} - {message}")
+            # Logger().error((f"API request failed: {e.response.status_code} - {message}"))
 
         except Exception as e:
             print(f"Unexpected error occurred: {e}")

@@ -100,7 +100,7 @@ class APIClient:
         """Set remaining sessions for the current API key."""
         session = self.extract_user_activity(data).get('remaining', 0)
         if self.current_api_key:
-            self.api_remaining_sessions[self.current_api_key] = session - self.config.critical_threshold
+            self.api_remaining_sessions[self.current_api_key] = session - self.config.critical_threshold if session > 0 else 0
 
     def get_slots(self) -> Dict[str, Any]:
         """Fetch current visa slots from API."""
@@ -128,9 +128,11 @@ class APIClient:
             if e.response.status_code == 429:
                 session = str(e.response.json().get('userActivity').get('remaining'))
                 message = message + " : " + self.current_api_key + " : " + session
+                if not self.api_remaining_sessions[self.current_api_key]:
+                    self.api_remaining_sessions[self.current_api_key] = 0
+                else: self.api_remaining_sessions[self.current_api_key] = self.api_remaining_sessions[self.current_api_key] - 10
 
             raise Exception(f"API request failed: {e.response.status_code} - {message}")
-            # Logger().error((f"API request failed: {e.response.status_code} - {message}"))
 
         except Exception as e:
             print(f"Unexpected error occurred: {e}")

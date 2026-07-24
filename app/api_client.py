@@ -110,6 +110,8 @@ class APIClient:
             if not self.reset:
                 self.reset_seesion()
 
+        print(self.api_remaining_sessions)
+
         headers = {
             "User-Agent": self.user_agent,
             "X-Api-Key": self.get_api_key(),
@@ -128,8 +130,8 @@ class APIClient:
             if e.response.status_code == 429:
                 session = str(e.response.json().get('userActivity').get('remaining'))
                 message = message + " : " + self.current_api_key + " : " + session
-                if not self.api_remaining_sessions[self.current_api_key]:
-                    self.api_remaining_sessions[self.current_api_key] = 0
+                if not self.current_api_key in self.api_remaining_sessions:
+                    self.api_remaining_sessions[self.current_api_key] = session
                 else: self.api_remaining_sessions[self.current_api_key] = self.api_remaining_sessions[self.current_api_key] - 10
 
             raise Exception(f"API request failed: {e.response.status_code} - {message}")

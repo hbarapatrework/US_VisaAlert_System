@@ -68,13 +68,13 @@ class VisaAlertSystem:
             return key_remaining_sessions, api_key
         
         except Exception as e:
-            self.logger.error(f"Failed to process slots: {e}")
-            print(e)
+
             if "429" in str(e):
                 rs = str(e).split(":")[-1]
-                print(rs)
                 self.logger.error(f"Failed to process slots: {rs}")
-                return 0, str(e).split(":")[-2]
+                return int(rs), str(e).split(":")[-2]
+
+            self.logger.error(f"Failed to process slots: {e}")
             return 0, ""
     
     def send_notifications(self, message: dict, priorities: dict, ) -> int:

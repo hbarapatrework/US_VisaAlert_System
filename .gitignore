@@ -3,6 +3,7 @@ visa_slots.db
 
 # Envronment file
 .env
+.env*
 
 # Python
 __pycache__/

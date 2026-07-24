@@ -82,7 +82,7 @@ class APIClient:
         """Extract user activity from API response."""
         return data.get('userActivity', {})
     
-    def get_total_remaining_sessions(self, data: Dict[str, Any]) -> int:
+    def get_total_remaining_sessions(self) -> int:
         """Get remaining sessions from API response."""
         return sum(value for value in self.api_remaining_sessions.values())
 

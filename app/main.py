@@ -38,7 +38,7 @@ class VisaAlertSystem:
             data = self.api_client.get_slots()
             
             slot_details = self.api_client.extract_slot_details(data)
-            key_remaining_sessions = self.api_client.get_remaining_sessions(data)
+            key_remaining_sessions = self.api_client.get_total_remaining_sessions(data)
             api_key = self.api_client.current_api_key
             
             self.logger.info(f"API call successful. {api_key} - Remaining sessions: {key_remaining_sessions}")

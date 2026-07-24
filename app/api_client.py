@@ -127,7 +127,7 @@ class APIClient:
 
             if e.response.status_code == 429:
                 session = str(e.response.json().get('userActivity').get('remaining'))
-                message = message + " : " + session
+                message = message + " : " + self.current_api_key + " : " + session
 
             raise Exception(f"API request failed: {e.response.status_code} - {message}")
 

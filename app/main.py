@@ -1,12 +1,12 @@
 import time
 from config import Config
 from database.database import Database
-from .api_client import APIClient
-from .polling import PollingManager
+from app.api_client import APIClient
+from app.polling import PollingManager
 from notification.notifications import NotificationManager
-from .visa_processor import VisaProcessor
+from app.visa_processor import VisaProcessor
 from notification.topic_manager import TopicManager
-from .logger import Logger
+from app.logger import Logger
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,7 +38,7 @@ class VisaAlertSystem:
             data = self.api_client.get_slots()
             
             slot_details = self.api_client.extract_slot_details(data)
-            key_remaining_sessions = self.api_client.get_total_remaining_sessions(data)
+            key_remaining_sessions = self.api_client.get_total_remaining_sessions()
             api_key = self.api_client.current_api_key
             
             self.logger.info(f"API call successful. {api_key} - Remaining sessions: {key_remaining_sessions}")
@@ -114,7 +114,7 @@ class VisaAlertSystem:
                     wait_time = self.get_next_wait_time(total_remaining_sessions)
                 else: wait_time = self.config.min_interval
 
-                self.logger.critical(f"Next poll in {int(wait_time)}s (Total Remaining sessions: {total_remaining_sessions})")
+                self.logger.critical(f"Next poll in {int(wait_time)}s (Total Remaining sessions for {key}: {total_remaining_sessions})")
 
                 # Sleep in small increments to allow for graceful shutdown
                 start_time = time.time()

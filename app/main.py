@@ -107,7 +107,6 @@ class VisaAlertSystem:
             while True:
                 # if self.check_reset_time():
                 #     self.logger.warning("Reset time detected - sessions will be replenished")
-                
                 key_remaining_sessions, key = self.process_slots()
                 if key_remaining_sessions <= self.config.critical_threshold:
                     self.logger.warning("Remaining sessions below critical threshold")
@@ -117,9 +116,9 @@ class VisaAlertSystem:
 
                 if self.api_client.keys_checked:
                     wait_time = self.get_next_wait_time(total_remaining_sessions)
-                else: wait_time = self.config.min_interval
+                else: wait_time = 30 #self.config.min_interval
 
-                self.logger.critical(f"Next poll in {int(wait_time)}s (Total Remaining sessions for {key}: {total_remaining_sessions})")
+                self.logger.critical(f"Next poll in {int(wait_time)}s (Total Remaining sessions: {total_remaining_sessions})")
 
                 # Sleep in small increments to allow for graceful shutdown
                 start_time = time.time()

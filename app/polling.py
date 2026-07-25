@@ -22,7 +22,6 @@ class PollingManager:
         min_interval = self.config.min_interval
         max_interval = self.config.max_interval
         critical_threshold = self.config.critical_threshold
-        max_daily_polls = self.config.max_daily_polls
         
         if remaining_sessions <= critical_threshold:
             return max_interval
@@ -31,22 +30,17 @@ class PollingManager:
         if 1 < datetime.now().hour < 5:
             return 15*60
 
-        minutes_until_reset = self.util.get_time_until_reset()
-        interval_minutes = minutes_until_reset / (remaining_sessions)
+        minutes_until_reset = self.util.get_minutes_until_reset()
+        interval_minutes = minutes_until_reset / remaining_sessions
         interval_seconds = interval_minutes * 60
 
         # Keep within configured limits
         interval_seconds = max(
-            self.config.min_interval,
-            min(self.config.max_interval, interval_seconds)
+            min_interval, min(max_interval, interval_seconds)
         )
 
         return interval_seconds
-        
-        # ratio = remaining_sessions / max_daily_polls
-        # interval = min_interval + (max_interval - min_interval) * (1 - ratio)
-        #
-        # return max(min_interval, min(max_interval, interval))
+
     
     def should_poll(self) -> bool:
         """Check if enough time has passed since last poll."""
@@ -77,7 +71,7 @@ class PollingManager:
     def time_since_last_poll(self) -> float:
         """Get seconds elapsed since last poll."""
         return time.time() - self.get_last_poll_time()
-    
+
     def get_next_poll_wait_time(self, remaining_sessions: int) -> float:
         """Get seconds to wait before next poll."""
         interval = self.calculate_interval(remaining_sessions)

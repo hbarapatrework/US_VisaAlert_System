@@ -23,6 +23,7 @@ class APIClient:
         self.api_remaining_sessions = {}
         self.current_api_key = None
         self.keys_checked = False
+        self.keys_checked_time = 0
         self.reset = False
 
     def reset_seesion(self):
@@ -77,7 +78,10 @@ class APIClient:
                 if not key in self.api_remaining_sessions:
                     self.current_api_key = key
                     return key
-        else: self.keys_checked = True
+        else:
+            if not self.keys_checked:
+                self.keys_checked = True
+                self.keys_checked_time = self.util.get_current_epoch()
 
         self.current_api_key = self.get_next_key(self.util.get_minutes_until_reset())
         Logger().debug(f"Using API key: {self.current_api_key}")
@@ -98,7 +102,8 @@ class APIClient:
 
     def get_total_sessions(self) -> int:
         """Get remaining sessions from API response."""
-        return sum(value for value in self.api_remaining_sessions.values())
+        Logger().debug(self.api_remaining_sessions)
+        return sum(value for value in self.api_remaining_sessions.values() if value > 0)
 
     def set_remaining_sessions(self, data: Dict[str, Any]) -> None:
         """Set remaining sessions for the current API key."""
@@ -108,9 +113,11 @@ class APIClient:
 
     def get_slots(self) -> Dict[str, Any]:
         """Fetch current visa slots from API."""
-        if self.util.get_minutes_until_reset() < 60:
+
+        last_key_check = self.util.get_current_epoch() - self.keys_checked_time if self.keys_checked_time else 0
+        if last_key_check >= 30*60:
             if self.reset: self.reset = False
-        if self.util.is_reset_time():
+        if self.util.is_reset_time() or last_key_check > 60*60:
             if not self.reset:
                 self.reset_seesion()
 

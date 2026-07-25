@@ -54,6 +54,8 @@ class Helper:
 
         return reset_start <= current_time <= reset_end
 
+    def get_current_epoch(self):
+        return int(datetime.now().timestamp())
 
 # if __name__ == "__main__":
 #     config = Config()

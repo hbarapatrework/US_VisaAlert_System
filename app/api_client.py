@@ -118,7 +118,7 @@ class APIClient:
         if last_key_check >= 30*60:
             if self.reset: self.reset = False
         if self.util.is_reset_time() or last_key_check > 60*60:
-            if not self.reset:
+            if not self.reset and self.keys_checked:
                 self.reset_seesion()
 
 
@@ -142,7 +142,7 @@ class APIClient:
                 message = f"{message} : {self.current_api_key} : {session}"
                 if not self.current_api_key in self.api_remaining_sessions:
                     self.api_remaining_sessions[self.current_api_key] = session
-                else: self.api_remaining_sessions[self.current_api_key] = self.api_remaining_sessions[self.current_api_key] - 10
+                else: self.api_remaining_sessions[self.current_api_key] = session
 
             raise Exception(f"API request failed: {e.response.status_code} - {message}")
 

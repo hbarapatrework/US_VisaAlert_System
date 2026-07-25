@@ -6,6 +6,7 @@ from app.polling import PollingManager
 from notification.notifications import NotificationManager
 from app.visa_processor import VisaProcessor
 from notification.topic_manager import TopicManager
+from app.utils import Helper
 from app.logger import Logger
 from pathlib import Path
 
@@ -30,6 +31,9 @@ class VisaAlertSystem:
         self.polling_manager = PollingManager(self.config)
         self.notification_manager = NotificationManager(self.config)
         self.visa_processor = VisaProcessor(self.config)
+        self.util = Helper(self.config)
+
+        self.notification_queue = []
     
     def process_slots(self) -> tuple:
         """Fetch and process slot data."""
@@ -93,10 +97,6 @@ class VisaAlertSystem:
         """Calculate wait time before next poll."""
         return self.polling_manager.get_next_poll_wait_time(remaining_sessions)
     
-    def check_reset_time(self) -> bool:
-        """Check if it's reset time."""
-        return self.polling_manager.is_reset_time()
-    
     def start_continuous(self):
         """Start the system in continuous polling mode."""
         self.logger.info("Starting US Visa Alert System...")
@@ -105,12 +105,15 @@ class VisaAlertSystem:
         
         try:
             while True:
-                # if self.check_reset_time():
-                #     self.logger.warning("Reset time detected - sessions will be replenished")
+                if self.util.is_reset_time():
+                    self.logger.warning("Reset time detected - sessions will be replenished")
+                    self.notification_queue.clear()
                 key_remaining_sessions, key = self.process_slots()
                 if key_remaining_sessions <= self.config.critical_threshold:
-                    self.logger.warning("Remaining sessions below critical threshold")
-                    self.notification_manager.send_notification("session", f"{key}: {key_remaining_sessions} Remaining sessions below critical threshold", 5)
+                    self.logger.warning(f"{key} : Remaining sessions below critical threshold")
+                    if not key in self.notification_queue:
+                        self.notification_manager.send_notification("session", f"{key}: {key_remaining_sessions} Remaining sessions below critical threshold", 5)
+                        self.notification_queue.append(key)
 
                 total_remaining_sessions = self.api_client.get_total_sessions()
 

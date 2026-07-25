@@ -38,7 +38,7 @@ class VisaAlertSystem:
             data = self.api_client.get_slots()
             
             slot_details = self.api_client.extract_slot_details(data)
-            key_remaining_sessions = self.api_client.get_total_remaining_sessions()
+            key_remaining_sessions = self.api_client.get_remaining_sessions(data)
             api_key = self.api_client.current_api_key
             
             self.logger.info(f"API call successful. {api_key} - Remaining sessions: {key_remaining_sessions}")
@@ -113,7 +113,7 @@ class VisaAlertSystem:
                     self.logger.warning("Remaining sessions below critical threshold")
                     self.notification_manager.send_notification("session", f"{key}: {key_remaining_sessions} Remaining sessions below critical threshold", 5)
 
-                total_remaining_sessions = self.api_client.get_total_remaining_sessions()
+                total_remaining_sessions = self.api_client.get_total_sessions()
 
                 if self.api_client.keys_checked:
                     wait_time = self.get_next_wait_time(total_remaining_sessions)

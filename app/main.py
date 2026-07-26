@@ -114,6 +114,9 @@ class VisaAlertSystem:
                     if not key in self.notification_queue:
                         self.notification_manager.send_notification("session", f"{key}: {key_remaining_sessions} Remaining sessions below critical threshold", 5)
                         self.notification_queue.append(key)
+                else:
+                    if key in self.notification_queue:
+                        self.notification_queue.remove(key)
 
                 total_remaining_sessions = self.api_client.get_total_sessions()
 
